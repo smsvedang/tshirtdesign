@@ -2,7 +2,7 @@
 // 1. FIREBASE AUR APP CHECK SETUP
 // =================================================================
 
-// ⚠️ IMPORTANT: Apne Firebase project se copy karke yahaan paste karein
+// ⚠️ IMPORTANT: Apni Firebase project config yahaan paste karein
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyBTPxLRI-yE7Cz8F0Gj4Z9DBdOso5O-k_w",
@@ -23,7 +23,7 @@ const appCheck = firebase.appCheck();
 // App Check ko activate karein
 // ⚠️ IMPORTANT: Apna reCAPTCHA v3 'Site Key' yahaan daalein
 appCheck.activate(
-  '6LchTu8rAAAAAFlkAO8O6REC9Ij66f7uvTbo85J8',
+  'YOUR_RECAPTCHA_V3_SITE_KEY',
   true // Token auto-refresh
 );
 
@@ -117,6 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
         loadCartPage();
     }
 
+    // 4. AUTH PAGE (LOGIN/SIGNUP)
+    if (document.querySelector('.auth-container')) {
+        setupAuthPage();
+    }
+
     // --- Function Definitions ---
 
     // (Products / Home page)
@@ -144,34 +149,40 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadProductDetail() {
         // Asli app mein, hum URL se product ID lenge (e.g., product-detail.html?id=p1)
         // Abhi ke liye, hum bas pehla dummy product dikha rahe hain
-        const product = dummyProducts[0]; // Example: Sirf pehla product dikhao
-
-        // NOTE: Isse behtar karne ke liye, aapko URL se ID nikalni hogi
-        // const urlParams = new URLSearchParams(window.location.search);
-        // const productId = urlParams.get('id');
-        // const product = dummyProducts.find(p => p.id === productId) || dummyProducts[0];
+        
+        // Product ID ko URL se nikalne ka code:
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        const product = dummyProducts.find(p => p.id === productId) || dummyProducts[0]; // Agar ID na mile toh pehla product dikhao
 
         document.querySelector('.product-image img').src = product.image;
         document.querySelector('.product-info h1').textContent = product.name;
         document.querySelector('.product-price').textContent = `₹${product.price}`;
         document.querySelector('.product-description').textContent = product.description;
+        
+        // Product ID ko button mein store karein taaki cart mein add kar sakein
+        document.querySelector('.add-to-cart-btn').dataset.productId = product.id;
     }
 
     // (Product Detail page)
     function attachAddToCartListener() {
         const addToCartButton = document.querySelector('.add-to-cart-btn');
         if (addToCartButton) {
-            addToCartButton.addEventListener('click', () => {
+            addToCartButton.addEventListener('click', (e) => {
                 // Product ki details page se collect karo
-                const product = dummyProducts[0]; // Example ke liye
+                const productId = e.target.dataset.productId;
+                const product = dummyProducts.find(p => p.id === productId);
+
+                if (!product) {
+                    alert("Error: Product not found!");
+                    return;
+                }
+                
                 const size = document.getElementById('size').value;
                 const quantity = parseInt(document.getElementById('quantity').value);
-                const price = parseInt(document.querySelector('.product-price').textContent.replace('₹', ''));
-                const name = document.querySelector('.product-info h1').textContent;
-                const image = document.querySelector('.product-image img').src;
 
                 // Cart mein add karo
-                addToCart(product.id, name, price, size, quantity, image);
+                addToCart(product.id, product.name, product.price, size, quantity, product.image);
             });
         }
     }
@@ -309,6 +320,123 @@ document.addEventListener('DOMContentLoaded', () => {
         saveCart(cart);
         loadCartPage(); // Cart page ko refresh karo
     }
+
+    // (Auth Page)
+    function setupAuthPage() {
+        const loginTab = document.getElementById('login-tab');
+        const signupTab = document.getElementById('signup-tab');
+        const authContainer = document.querySelector('.auth-container');
+        const formTitle = document.getElementById('form-title');
+        const submitButton = document.getElementById('submit-button');
+        const authForm = document.getElementById('auth-form');
+
+        // Tab switching
+        loginTab.addEventListener('click', () => {
+            authContainer.classList.remove('signup-mode');
+            loginTab.classList.add('active');
+            signupTab.classList.remove('active');
+            formTitle.textContent = 'Login to Your Account';
+            submitButton.textContent = 'Login';
+        });
+
+        signupTab.addEventListener('click', () => {
+            authContainer.classList.add('signup-mode');
+            signupTab.classList.add('active');
+            loginTab.classList.remove('active');
+            formTitle.textContent = 'Create a New Account';
+            submitButton.textContent = 'Sign Up';
+        });
+
+        // Form Submission
+        authForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const name = document.getElementById('name').value;
+            
+            // Message clear karo
+            showAuthMessage('', 'success'); // Clear any old message
+            
+            const isSignup = authContainer.classList.contains('signup-mode');
+
+            if (isSignup) {
+                // --- SIGNUP LOGIC ---
+                if (name.trim() === '') {
+                    showAuthMessage('Please enter your full name.', 'error');
+                    return;
+                }
+                
+                auth.createUserWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        // Signed in 
+                        const user = userCredential.user;
+                        // User ka profile update karo (naam add karo)
+                        return user.updateProfile({
+                            displayName: name
+                        });
+                    })
+                    .then(() => {
+                        showAuthMessage('Account created successfully! Redirecting...', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'index.html'; // Homepage par bhejo
+                        }, 2000);
+                    })
+                    .catch((error) => {
+                        // Yahaan App Check error bhi aa sakta hai
+                        console.error("Signup Error:", error);
+                        showAuthMessage(error.message, 'error');
+                    });
+
+            } else {
+                // --- LOGIN LOGIC ---
+                auth.signInWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        // Signed in
+                        showAuthMessage('Login successful! Redirecting...', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'index.html'; // Homepage par bhejo
+                        }, 2000);
+                    })
+                    .catch((error) => {
+                        // Yahaan App Check error bhi aa sakta hai
+                        console.error("Login Error:", error);
+                        showAuthMessage(error.message, 'error');
+                    });
+            }
+        });
+    }
+
+    // (Auth Page Helper)
+    function showAuthMessage(message, type) {
+        const authMessage = document.getElementById('auth-message');
+        if (authMessage) {
+            authMessage.textContent = message;
+            authMessage.className = type; // 'success' ya 'error'
+        }
+    }
+
+
+    // --- USER STATUS (Sabhi Pages par) ---
+    // Check karta hai ki user logged in hai ya nahi
+    auth.onAuthStateChanged((user) => {
+        const accountLink = document.getElementById('nav-account-link');
+        if (user) {
+            // User is logged in
+            console.log('User is logged in:', user.displayName || user.email);
+            if (accountLink) {
+                // Isse hum 'account.html' (jo baad mein banayenge) ya 'logout' button mein badal sakte hain
+                accountLink.href = '#'; // Abhi ke liye link disable kar dete hain
+                // Yahaan aap ek 'Logout' button bhi dynamically add kar sakte hain
+            }
+        } else {
+            // User is logged out
+            console.log('User is logged out.');
+            if (accountLink) {
+                accountLink.href = 'login.html';
+            }
+        }
+    });
+
 
     // --- Initial Load ---
     // Page load hote hi cart count ko update karo

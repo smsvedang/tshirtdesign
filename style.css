@@ -507,3 +507,141 @@ footer {
 #auth-message.error {
     color: red;
 }
+
+/* ========================
+   AUTH MODAL (POPUP)
+   ======================== */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none; /* JS se show hoga */
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal-content {
+    position: relative;
+    background-color: #fff;
+    width: 90%;
+    max-width: 450px;
+    border-radius: 10px;
+    padding: 2.5rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 2.5rem;
+    color: #aaa;
+    background: none;
+    border: none;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    color: #333;
+}
+
+/* Auth container ko modal ke andar fit karna */
+.modal-content.auth-container {
+    margin-top: 0; /* Page ke margin ko override karo */
+    padding-top: 3.5rem; /* Close button ke liye jagah */
+}
+
+/* ========================
+   GOOGLE BUTTON & SEPARATOR
+   ======================== */
+
+.auth-separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #aaa;
+    margin: 1.5rem 0;
+}
+
+.auth-separator::before,
+.auth-separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #eee;
+}
+
+.auth-separator span {
+    padding: 0 1rem;
+    font-size: 0.9rem;
+}
+
+.google-btn {
+    width: 100%;
+    background-color: #fff;
+    color: #444;
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.google-btn:hover {
+    background-color: #f9f9f9;
+}
+
+.google-btn svg {
+    display: inline-block;
+}
+
+/* ========================
+   USER LOGOUT (NAV BAR)
+   ======================== */
+   
+#nav-account-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#nav-account-section .nav-icon-link {
+    display: block;
+}
+
+#nav-account-section .nav-user-info {
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: none; /* Logged in hone par JS se show hoga */
+}
+
+#nav-account-section .nav-user-info .user-name {
+    color: #333;
+}
+
+#logout-btn {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-color);
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    padding: 0;
+}
+
+#logout-btn:hover {
+    text-decoration: underline;
+}

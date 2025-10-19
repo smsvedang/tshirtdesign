@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - Your Brand Name</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="index.html">YourBrand</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Shop</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+            <div class="nav-icons">
+                <a href="cart.html">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                    <span class="cart-count">0</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="product-detail-section">
+            <div class="product-detail-container">
+                <div class="product-image">
+                    <img src="https://placehold.co/600x750/EEE/31343C?text=Main+T-Shirt+Image" alt="Minimalist Astro Tee">
+                </div>
+                <div class="product-info">
+                    <h1>Minimalist Astro Tee</h1>
+                    <p class="product-price">₹799</p>
+                    <p class="product-description">
+                        This premium quality tee is made from 100% cotton, offering a soft and comfortable fit. The minimalist astronaut design is perfect for space lovers and dreamers.
+                    </p>
+                    
+                    <div class="product-options">
+                        <label for="size">Size:</label>
+                        <select id="size" name="size">
+                            <option value="s">S</option>
+                            <option value="m">M</option>
+                            <option value="l">L</option>
+                            <option value="xl">XL</option>
+                        </select>
+                    </div>
+
+                    <div class="product-quantity">
+                        <label for="quantity">Quantity:</label>
+                        <input type="number" id="quantity" name="quantity" value="1" min="1">
+                    </div>
+
+                    <button class="btn add-to-cart-btn">Add to Cart</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Your Brand Name. All Rights Reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
